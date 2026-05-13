@@ -17,30 +17,17 @@ int main() {
     connect(sock, (struct sockaddr*)&server_addr, sizeof(server_addr));
 
     while (1) {
-    client_fd = accept(server_fd, (struct sockaddr*)&client_addr, &addr_len);
+        printf("Enter message: ");
+        fgets(buffer, sizeof(buffer), stdin);
 
-    char client_ip[INET_ADDRSTRLEN];
-    inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
+        send(sock, buffer, strlen(buffer), 0);
 
-    printf("%s connected\n", client_ip);
-
-    while (1) {
         memset(buffer, 0, sizeof(buffer));
+        recv(sock, buffer, sizeof(buffer), 0);
 
-        int bytes = recv(client_fd, buffer, sizeof(buffer), 0);
-
-        if (bytes <= 0 || strcmp(buffer, "bye\n") == 0) {
-            printf("Client disconnected\n");
-            break;
-        }
-        else{
-        printf("Received: %s\n", buffer);
-        send(client_fd, buffer, bytes, 0);
-        }
+        printf("Server: %s\n", buffer);
     }
 
-    close(client_fd);
-}
     close(sock);
     return 0;
 }
