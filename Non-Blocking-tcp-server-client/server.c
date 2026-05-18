@@ -102,7 +102,7 @@ int main() {
             int new_fd = accept(server_fd,
                                 (struct sockaddr*)&client_addr,
                                 &addr_len);
-
+          
             if(new_fd == -1) {
 
                 if(errno == EAGAIN ||
@@ -117,6 +117,9 @@ int main() {
             }
 
            
+            fd_set readfds, writefds ;
+            FD_ZERO(&readfds);
+            FD_ZERO(&writefds);
 
             flags = fcntl(new_fd,
                           F_GETFL,
@@ -125,8 +128,8 @@ int main() {
             fcntl(new_fd,
                   F_SETFL,
                   flags | O_NONBLOCK);
-
-          
+            FD_SET(new_fd, &readfds);
+            FD_SET(new_fd, &writefds);
 
             int added = 0;
 
